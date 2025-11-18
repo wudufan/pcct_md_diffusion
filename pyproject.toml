@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=45"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pcct_md_diffusion"
+version = "0.1.0"
+description = "PCCT MD Diffusion"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [
+    {name = "Dufan Wu", email = "dufan.wu@osumc.edu"}
+]
+dependencies = [
+    "numpy",
+    "torch",
+]
