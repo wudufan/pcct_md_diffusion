@@ -163,7 +163,9 @@ def load_sinogram(
         first_rotation (int): First rotation index to load.
         last_rotation (int): Last rotation index to load.
     Returns:
-        sitk.Image: Loaded sinogram image.
+        sitk.Image: Loaded sinogram image, shape (nchannel, nview, nv*number_of_rotations, nu).
+        float: Pixel size in u direction.
+        float: Pixel size in v direction.
     """
     # in case channel is int
     if isinstance(channel, int):
@@ -234,6 +236,67 @@ def average_projection_slices(sinogram, dv, num_slices_to_average=2) -> Tuple[np
 
     new_dv = dv * num_slices_to_average
     return sinogram, new_dv
+
+
+# %%
+def load_image(
+        foldername: str,
+        channel: Union[List[int], int] = None,
+        prefix='img_ch',
+) -> Tuple[np.array, float, float, float]:
+    """Load image from folder.
+
+    Args:
+        foldername (str): Folder name containing image files.
+        channel (int): Channel index to load.
+    Returns:
+        np.array: Loaded image array, shape (nchannel, nz, ny, nx).
+        float: Voxel size in x direction.
+        float: Voxel size in y direction.
+        float: Voxel size in z direction.
+    """
+    # in case channel is int
+    if isinstance(channel, int):
+        channel = [channel]
+    elif channel is None:
+        # find all available channels
+        filenames = glob.glob(os.path.join(foldername, f'{prefix}*.nii.gz'))
+        channel = sorted(list(set(int(os.path.basename(fname).split('_')[1][2]) for fname in filenames)))
+
+    all_images = []
+    for ch in channel:
+        print(f'Loading channel {ch}...', flush=True)
+        sitk_img = sitk.ReadImage(os.path.join(foldername, f'{prefix}{ch}.nii.gz'))
+        img = sitk.GetArrayFromImage(sitk_img)
+        all_images.append(img)
+
+        dx, dy, dz = sitk_img.GetSpacing()
+
+    all_images = np.array(all_images).astype(np.float32)
+    return all_images, dx, dy, dz
+
+
+# %%
+def add_noise_gaussian(prj: np.ndarray, N0: float, dose_factor: float, seed: int = None) -> np.ndarray:
+    '''Add Gaussian noise to the projection data to simulate a lower dose acquisition.
+
+    Args:
+        prj (np.ndarray): Input projection data.
+        N0 (float): Incident photon number.
+        dose_factor (float): Dose reduction factor (0 < dose_factor <= 1).
+        seed (int): Random seed for reproducibility.
+    Returns:
+        np.ndarray: Noisy projection data.
+    '''
+    if seed is not None:
+        np.random.seed(seed)
+
+    # add noise
+    if N0 > 0 and dose_factor < 1:
+        prj = prj + np.sqrt((1 - dose_factor) / dose_factor * np.exp(prj) / N0) * np.random.normal(size=prj.shape)
+        prj = prj.astype(np.float32)
+
+    return prj
 
 
 # %%
