@@ -18,8 +18,9 @@ from leapctype import tomographicModels
 # %%
 class GeometryType(Enum):
     PARALLEL = 'parallel'
-    FAN = 'fan'
-    CONE = 'cone'
+    FAN_FLAT = 'fan_flat'
+    CONE_CURVED = 'cone_curved'
+    CONE_FLAT = 'cone_flat'
 
 
 class StandardGeometry:
@@ -45,6 +46,7 @@ class StandardGeometry:
         self.dv = np.float32(1.0)
         self.off_u = np.float32(0.0)
         self.off_v = np.float32(0.0)
+        self.helical_pitch = np.float32(0.0)
 
     def __repr__(self):
         attrs = vars(self)
@@ -94,17 +96,7 @@ def set_leapct_geometry(
             centerCol=(geo.nu - 1) / 2.0 + geo.off_u,
             phis=angles_in_deg,
         )
-        leapct.set_volume(
-            numX=geo.nx,
-            numY=geo.ny,
-            numZ=geo.nz,
-            voxelWidth=geo.dx,
-            voxelHeight=geo.dz,
-            offsetX=geo.cx,
-            offsetY=geo.cy,
-            offsetZ=geo.cz,
-        )
-    elif geometry_type == GeometryType.FAN:
+    elif geometry_type == GeometryType.FAN_FLAT:
         leapct.set_fanbeam(
             numAngles=geo.nview,
             numRows=geo.nv,
@@ -117,18 +109,37 @@ def set_leapct_geometry(
             sdd=geo.dsd,
             phis=angles_in_deg,
         )
-        leapct.set_volume(
-            numX=geo.nx,
-            numY=geo.ny,
-            numZ=geo.nz,
-            voxelWidth=geo.dx,
-            voxelHeight=geo.dz,
-            offsetX=geo.cx,
-            offsetY=geo.cy,
-            offsetZ=geo.cz,
+    elif geometry_type == GeometryType.CONE_CURVED or geometry_type == GeometryType.CONE_FLAT:
+        leapct.set_conebeam(
+            numAngles=geo.nview,
+            numRows=geo.nv,
+            numCols=geo.nu,
+            pixelHeight=geo.dv,
+            pixelWidth=geo.du,
+            centerRow=(geo.nv - 1) / 2.0 + geo.off_v,
+            centerCol=(geo.nu - 1) / 2.0 + geo.off_u,
+            sod=geo.dso,
+            sdd=geo.dsd,
+            helicalPitch=geo.helical_pitch,
+            phis=angles_in_deg
         )
+        if geometry_type == GeometryType.CONE_CURVED:
+            leapct.set_curvedDetector()
+        else:
+            leapct.set_flatDetector()
     else:
         raise NotImplementedError(f'Geometry type {geometry_type} not implemented.')
+
+    leapct.set_volume(
+        numX=geo.nx,
+        numY=geo.ny,
+        numZ=geo.nz,
+        voxelWidth=geo.dx,
+        voxelHeight=geo.dz,
+        offsetX=geo.cx,
+        offsetY=geo.cy,
+        offsetZ=geo.cz,
+    )
 
     return leapct
 
