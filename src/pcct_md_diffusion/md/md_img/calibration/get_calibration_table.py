@@ -100,8 +100,8 @@ def main(args):
 # %%
 if __name__ == '__main__':
     args = get_args([
-        '--input_dir', 'omnitom_pcd/calibration/calibration_1_7/img',
-        '--output_dir', 'omnitom_pcd/calibration/calibration_1_7',
+        '--input_dir', 'omnitom_pcd/calibration/calibration_42/img',
+        '--output_dir', 'omnitom_pcd/calibration/calibration_42',
         # '--subfolders', '0',
     ])
 
