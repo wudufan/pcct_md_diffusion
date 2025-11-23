@@ -576,9 +576,9 @@ if __name__ == '__main__':
         # '--mmd_triplets', 'air,blood_100,iodine_5;blood_100,calcium_100,iodine_5',
         # '--vnc_maps', 'iodine_5:blood_100',
 
-        '--input_scan', 'omnitom_pcd/recon/img/44',
-        '--output_dir', 'md_baseline/omnitom_pcd/recon/img/44/img_mmd',
-        '--input_calib', 'omnitom_pcd/calibration/calibration_42/img_md_calib_avg.csv',
+        '--input_scan', 'omnitom_pcd/recon/img/3',
+        '--output_dir', 'md_baseline/recon/img/3/img_mmd',
+        '--input_calib', 'omnitom_pcd/calibration/calibration_1_7/img_md_calib_avg.csv',
         '--slice_average', '6',
         '--display_window', '0', '100',
     ])

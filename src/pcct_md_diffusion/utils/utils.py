@@ -243,6 +243,7 @@ def load_image(
         foldername: str,
         channel: Union[List[int], int] = None,
         prefix='img_ch',
+        return_sitk_template: bool = False,
 ) -> Tuple[np.array, float, float, float]:
     """Load image from folder.
 
@@ -273,7 +274,10 @@ def load_image(
         dx, dy, dz = sitk_img.GetSpacing()
 
     all_images = np.array(all_images).astype(np.float32)
-    return all_images, dx, dy, dz
+    if return_sitk_template:
+        return all_images, dx, dy, dz, sitk_img
+    else:
+        return all_images, dx, dy, dz
 
 
 # %%
