@@ -50,7 +50,7 @@ def load_nist_attenuation(
     log_mus_resampled = np.interp(np.log(energies_resampled), log_energies, log_mus)
     mus_resampled = np.exp(log_mus_resampled)
 
-    df = pd.DataFrame({'Energy': energies_resampled, 'mu': mus_resampled})
+    df = pd.DataFrame({'energy': energies_resampled, 'mu': mus_resampled})
     return df
 
 
@@ -86,7 +86,7 @@ def load_mixture_attenuation(
     total_mass_mu = np.sum(mass_mus, axis=0)  # in cm^2/g
     total_mu = total_mass_mu * density / 10  # convert to mm^-1
 
-    df = pd.DataFrame({'Energy': kevs, 'mu': total_mu})
+    df = pd.DataFrame({'energy': kevs, 'mu': total_mu})
 
     return df
 
@@ -128,7 +128,7 @@ def load_mixture_attenuation_from_composition_file(
         )
         mus.append(df_mixture['mu'].values)
 
-    df_res = pd.DataFrame({'Energy': kevs})
+    df_res = pd.DataFrame({'energy': kevs})
     for comp, mu in zip(compositions, mus):
         df_res[comp] = mu
 
@@ -137,7 +137,7 @@ def load_mixture_attenuation_from_composition_file(
 
 # %%
 if __name__ == '__main__':
-    import matplotlib.pyplot as plt
+    # import matplotlib.pyplot as plt
     from pcct_md_diffusion.locations import base_input_dir
 
     df_mect_phantom = load_mixture_attenuation_from_composition_file(

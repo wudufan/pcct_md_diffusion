@@ -9,6 +9,6 @@ from .utils import load_image  # noqa
 
 from .utils import add_noise_gaussian  # noqa
 
-from .attenuation import load_nist_attenuation  # noqa
+from .attenuation import load_nist_attenuation, load_mixture_attenuation, load_mixture_attenuation_from_composition_file  # noqa
 
 from .ml_tools import get_run_info  # noqa
