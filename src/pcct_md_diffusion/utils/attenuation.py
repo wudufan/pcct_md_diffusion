@@ -95,6 +95,7 @@ def load_mixture_attenuation_from_composition_file(
     composition_file: str,
     attenuation_file_dir: str,
     kevs: np.array = np.arange(20, 120 + 1, 1),
+    return_density: bool = False
 ) -> pd.DataFrame:
     """Load attenuation data for a mixture of materials from a composition file.
 
@@ -131,6 +132,11 @@ def load_mixture_attenuation_from_composition_file(
     df_res = pd.DataFrame({'energy': kevs})
     for comp, mu in zip(compositions, mus):
         df_res[comp] = mu
+
+    if return_density:
+        dict_density = {row['composition']: row['density'] for _, row in df_comp.iterrows()}
+
+        return df_res, dict_density
 
     return df_res
 
