@@ -74,6 +74,9 @@ def load_mixture_attenuation(
     """
     assert len(components) == len(mass_fractions), "Components and mass_fractions must have the same length."
 
+    mass_fractions = np.array(mass_fractions)
+    mass_fractions = mass_fractions / mass_fractions.sum()  # normalize mass fractions
+
     mass_mus = []
     for comp, mf in zip(components, mass_fractions):
         df_comp = load_nist_attenuation(
